@@ -8,6 +8,10 @@ class NetworkManager {
   }
 
   connect(url) {
+     if (!url) {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    url = `${protocol}//${window.location.host}`;
+  }
     try {
       this.ws = new WebSocket(url);
       
