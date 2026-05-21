@@ -1,7 +1,3 @@
-const NetworkManager = require('./network/NetworkManager');
-const GameClient = require('./game/GameClient');
-const InputHandler = require('./input/InputHandler');
-
 class Game {
   constructor() {
     this.canvas = document.getElementById('gameCanvas');

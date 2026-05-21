@@ -125,7 +125,3 @@ class GameClient {
     }
   }
 }
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = GameClient;
-}
