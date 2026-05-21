@@ -1,13 +1,13 @@
 const { v4: uuidv4 } = require('uuid');
 const Player = require('./Player');
-const Map = require('./Map');
+const GameMap = require('./Map');
 const GameState = require('./GameState');
 
 class GameServer {
   constructor() {
     this.players = new Map();
     this.gameState = new GameState();
-    this.map = new Map();
+    this.gameMap = new GameMap();
     this.tickRate = 60;
     this.tickInterval = 1000 / this.tickRate;
     this.lastTick = Date.now();
@@ -17,7 +17,7 @@ class GameServer {
   addPlayer(ws) {
     const playerId = uuidv4();
     const team = this.getBalancedTeam();
-    const spawnPoint = this.map.getSpawnPoint(team);
+    const spawnPoint = this.gameMap.getSpawnPoint(team);
     
     const player = new Player(playerId, team, spawnPoint);
     player.ws = ws;
@@ -125,7 +125,7 @@ class GameServer {
         
         // Respawn player after 3 seconds
         setTimeout(() => {
-          hitPlayer.respawn(this.map.getSpawnPoint(hitPlayer.team));
+          hitPlayer.respawn(this.gameMap.getSpawnPoint(hitPlayer.team));
           this.broadcastGameState();
         }, 3000);
       }
