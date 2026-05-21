@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiplayer 3D Shooter</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #hud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      font-family: 'Courier New', monospace;
+    }
+
+    .hud-section {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #00ff00;
+      padding: 10px;
+      font-size: 14px;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    #player-stats {
+      top: 20px;
+      left: 20px;
+      min-width: 200px;
+    }
+
+    #team-scores {
+      top: 20px;
+      right: 20px;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    #radar {
+      bottom: 20px;
+      left: 20px;
+      width: 200px;
+      height: 200px;
+    }
+
+    #chat {
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      height: 150px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+
+    .stat-row {
+      margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .stat-label {
+      color: #00ff00;
+    }
+
+    .stat-value {
+      color: #ffff00;
+      font-weight: bold;
+    }
+
+    .red-team {
+      color: #ff4444;
+    }
+
+    .blue-team {
+      color: #4444ff;
+    }
+
+    #crosshair {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 30px;
+      height: 30px;
+      border: 2px solid #00ff00;
+      pointer-events: none;
+    }
+
+    #crosshair::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 4px;
+      background: #00ff00;
+    }
+
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .connecting {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  
+  <div id="loading" class="connecting">Connecting to server...</div>
+  
+  <div id="hud" style="display: none;">
+    <div id="crosshair"></div>
+    
+    <div id="player-stats" class="hud-section">
+      <div class="stat-row">
+        <span class="stat-label">HEALTH:</span>
+        <span class="stat-value" id="health">100</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">AMMO:</span>
+        <span class="stat-value" id="ammo">120</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">KILLS:</span>
+        <span class="stat-value" id="kills">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">DEATHS:</span>
+        <span class="stat-value" id="deaths">0</span>
+      </div>
+    </div>
+
+    <div id="team-scores" class="hud-section">
+      <div style="margin-bottom: 10px; font-size: 18px; font-weight: bold;">TEAM SCORES</div>
+      <div class="stat-row">
+        <span class="red-team">RED:</span>
+        <span class="red-team" id="red-score">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="blue-team">BLUE:</span>
+        <span class="blue-team" id="blue-score">0</span>
+      </div>
+    </div>
+
+    <div id="radar" class="hud-section">
+      <canvas id="radarCanvas" width="200" height="200" style="background: #000;"></canvas>
+    </div>
+
+    <div id="chat" class="hud-section">
+      <div id="chatLog" style="height: 100%; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="src/index.js"></script>
+</body>
+</html>
