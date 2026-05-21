@@ -17,7 +17,10 @@ class GameClient {
       const mesh = this.playerMeshes.get(player.id);
       if (mesh) {
         mesh.position.copy(player.position);
-        mesh.rotation.copy(player.rotation);
+        
+        // Convert Euler angles to quaternion before applying
+        const euler = new THREE.Euler(player.rotation.x, player.rotation.y, player.rotation.z, 'YXZ');
+        mesh.quaternion.setFromEuler(euler);
         
         // Update material based on team and health
         if (!this.game.playerId || player.id !== this.game.playerId) {
@@ -90,7 +93,11 @@ class GameClient {
     group.add(healthBar);
     
     group.position.copy(player.position);
-    group.rotation.copy(player.rotation);
+    
+    // Convert Euler angles to quaternion on creation
+    const euler = new THREE.Euler(player.rotation.x, player.rotation.y, player.rotation.z, 'YXZ');
+    group.quaternion.setFromEuler(euler);
+    
     group.castShadow = true;
     group.userData = { playerId: player.id };
     
