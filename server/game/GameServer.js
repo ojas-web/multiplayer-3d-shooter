@@ -240,5 +240,4 @@ class GameServer {
   }
 }
 
-module.module.js
-exports = GameServer;
+module.exports = GameServer;
