@@ -14,6 +14,8 @@ class Player {
     this.deaths = 0;
     this.ammo = 120;
     this.maxAmmo = 120;
+    this.isReloading = false;
+    this.reloadCooldown = 0;
     
     // Input state
     this.input = {
@@ -41,14 +43,36 @@ class Player {
     this.health = this.maxHealth;
     this.isDead = false;
     this.ammo = this.maxAmmo;
+    this.isReloading = false;
   }
 
   updateInput(input) {
     this.input = input;
   }
 
+  reload() {
+    if (this.isReloading || this.reloadCooldown > 0) return false;
+    if (this.ammo === this.maxAmmo) return false;
+    
+    this.isReloading = true;
+    this.reloadCooldown = 1500; // 1.5 second cooldown
+    
+    // Simulate reload time
+    setTimeout(() => {
+      this.ammo = this.maxAmmo;
+      this.isReloading = false;
+    }, 1500);
+    
+    return true;
+  }
+
   update(deltaTime) {
     if (this.isDead) return;
+    
+    // Update reload cooldown
+    if (this.reloadCooldown > 0) {
+      this.reloadCooldown -= deltaTime;
+    }
     
     const moveSpeed = 0.2; // units per millisecond
     const direction = { x: 0, z: 0 };

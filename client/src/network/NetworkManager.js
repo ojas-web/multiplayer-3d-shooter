@@ -8,10 +8,6 @@ class NetworkManager {
   }
 
   connect(url) {
-     if (!url) {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    url = `${protocol}//${window.location.host}`;
-  }
     try {
       this.ws = new WebSocket(url);
       
@@ -60,6 +56,10 @@ class NetworkManager {
       
       case 'PLAYER_LEFT':
         console.log(`Player ${message.playerId} left`);
+        break;
+      
+      case 'RELOAD_COMPLETE':
+        console.log('Reload complete!');
         break;
       
       case 'PONG':

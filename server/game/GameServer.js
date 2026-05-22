@@ -1,13 +1,13 @@
 const { v4: uuidv4 } = require('uuid');
 const Player = require('./Player');
-const GameMap = require('./Map');
+const Map = require('./Map');
 const GameState = require('./GameState');
 
 class GameServer {
   constructor() {
     this.players = new Map();
     this.gameState = new GameState();
-    this.gameMap = new GameMap();
+    this.map = new Map();
     this.tickRate = 60;
     this.tickInterval = 1000 / this.tickRate;
     this.lastTick = Date.now();
@@ -17,7 +17,7 @@ class GameServer {
   addPlayer(ws) {
     const playerId = uuidv4();
     const team = this.getBalancedTeam();
-    const spawnPoint = this.gameMap.getSpawnPoint(team);
+    const spawnPoint = this.map.getSpawnPoint(team);
     
     const player = new Player(playerId, team, spawnPoint);
     player.ws = ws;
@@ -75,9 +75,28 @@ class GameServer {
         player.updateInput(message.input);
         break;
       
+      case 'PLAYER_RELOAD':
+        this.handleReload(player);
+        break;
+      
       case 'PING':
         ws.send(JSON.stringify({ type: 'PONG' }));
         break;
+    }
+  }
+
+  handleReload(player) {
+    if (player.reload()) {
+      console.log(`Player ${player.id} is reloading`);
+      
+      // Notify all players after reload completes
+      setTimeout(() => {
+        this.broadcast({
+          type: 'RELOAD_COMPLETE',
+          playerId: player.id,
+          ammo: player.ammo
+        });
+      }, 1500);
     }
   }
 
@@ -125,7 +144,7 @@ class GameServer {
         
         // Respawn player after 3 seconds
         setTimeout(() => {
-          hitPlayer.respawn(this.gameMap.getSpawnPoint(hitPlayer.team));
+          hitPlayer.respawn(this.map.getSpawnPoint(hitPlayer.team));
           this.broadcastGameState();
         }, 3000);
       }
@@ -221,4 +240,5 @@ class GameServer {
   }
 }
 
-module.exports = GameServer;
+module.module.js
+exports = GameServer;

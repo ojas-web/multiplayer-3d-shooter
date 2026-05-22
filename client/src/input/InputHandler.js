@@ -19,6 +19,9 @@ class InputHandler {
     // Lock pointer
     this.pointerLocked = false;
     
+    // Reload cooldown
+    this.reloadCooldown = 0;
+    
     // Bind events
     this.setupEventListeners();
   }
@@ -47,6 +50,11 @@ class InputHandler {
     // Shooting
     if (e.key === ' ' && this.game.playerId) {
       this.shoot();
+    }
+    
+    // Reload
+    if (e.key.toLowerCase() === 'r' && this.game.playerId) {
+      this.reload();
     }
   }
 
@@ -88,7 +96,27 @@ class InputHandler {
     });
   }
 
+  reload() {
+    if (this.reloadCooldown > 0) return;
+    
+    console.log('Reloading...');
+    this.reloadCooldown = 1500; // 1.5 second cooldown
+    
+    this.game.networkManager.sendMessage({
+      type: 'PLAYER_RELOAD'
+    });
+    
+    setTimeout(() => {
+      this.reloadCooldown = 0;
+    }, 1500);
+  }
+
   update() {
+    // Update reload cooldown
+    if (this.reloadCooldown > 0) {
+      this.reloadCooldown -= 16; // Assuming ~60fps
+    }
+    
     // Calculate movement direction
     const moveDirection = new THREE.Vector3();
     const moveSpeed = 0.2;
