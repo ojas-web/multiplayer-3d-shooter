@@ -54,8 +54,8 @@ class GameClient {
   createPlayerMesh(player, isLocal) {
     const group = new THREE.Group();
     
-    // Body
-    const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1.8, 8, 16);
+    // Body (cylinder instead of capsule for compatibility)
+    const bodyGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.8, 8);
     const bodyMaterial = new THREE.MeshStandardMaterial({
       color: player.team === 'RED' ? 0xff0000 : 0x0000ff,
       roughness: 0.7,
