@@ -6,6 +6,8 @@ class GameClient {
   }
 
   updateGameState(gameState) {
+    if (!gameState || !gameState.players) return;
+    
     // Update or create player meshes
     for (const player of gameState.players) {
       if (!this.playerMeshes.has(player.id)) {
@@ -15,20 +17,26 @@ class GameClient {
       }
       
       const mesh = this.playerMeshes.get(player.id);
-      if (mesh) {
-        mesh.position.copy(player.position);
+      if (mesh && player.position) {
+        // Update position
+        mesh.position.x = player.position.x || 0;
+        mesh.position.y = player.position.y || 0;
+        mesh.position.z = player.position.z || 0;
         
-        // Convert Euler angles to quaternion before applying
-        const euler = new THREE.Euler(player.rotation.x, player.rotation.y, player.rotation.z, 'YXZ');
-        mesh.quaternion.setFromEuler(euler);
+        // Update rotation
+        if (player.rotation) {
+          mesh.rotation.x = player.rotation.x || 0;
+          mesh.rotation.y = player.rotation.y || 0;
+          mesh.rotation.z = player.rotation.z || 0;
+        }
         
-        // Update material based on team and health
-        if (!this.game.playerId || player.id !== this.game.playerId) {
-          const healthRatio = Math.max(0, player.health) / 100;
+        // Update material color based on team
+        const bodyMesh = mesh.children[0];
+        if (bodyMesh && bodyMesh.material) {
           if (player.team === 'RED') {
-            mesh.material.color.setHex(0xff0000);
+            bodyMesh.material.color.setHex(0xff0000);
           } else {
-            mesh.material.color.setHex(0x0000ff);
+            bodyMesh.material.color.setHex(0x0000ff);
           }
         }
       }
@@ -46,8 +54,8 @@ class GameClient {
   createPlayerMesh(player, isLocal) {
     const group = new THREE.Group();
     
-    // Body - using Box instead of Capsule for compatibility
-    const bodyGeometry = new THREE.BoxGeometry(0.6, 1.8, 0.6);
+    // Body
+    const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1.8, 8, 16);
     const bodyMaterial = new THREE.MeshStandardMaterial({
       color: player.team === 'RED' ? 0xff0000 : 0x0000ff,
       roughness: 0.7,
@@ -92,11 +100,18 @@ class GameClient {
     healthBar.position.z = 0.01;
     group.add(healthBar);
     
-    group.position.copy(player.position);
+    // Set initial position and rotation
+    if (player.position) {
+      group.position.x = player.position.x || 0;
+      group.position.y = player.position.y || 0;
+      group.position.z = player.position.z || 0;
+    }
     
-    // Convert Euler angles to quaternion on creation
-    const euler = new THREE.Euler(player.rotation.x, player.rotation.y, player.rotation.z, 'YXZ');
-    group.quaternion.setFromEuler(euler);
+    if (player.rotation) {
+      group.rotation.x = player.rotation.x || 0;
+      group.rotation.y = player.rotation.y || 0;
+      group.rotation.z = player.rotation.z || 0;
+    }
     
     group.castShadow = true;
     group.userData = { playerId: player.id };
@@ -111,6 +126,8 @@ class GameClient {
       this.game.scene.remove(obstacle);
     }
     this.game.obstacles = [];
+    
+    if (!obstacles) return;
     
     // Create new obstacles
     for (const obs of obstacles) {
