@@ -61,9 +61,11 @@ class InputHandler {
     const movementY = e.movementY || e.mozMovementY || 0;
     
     const sensitivity = 0.005;
+    
+    // Update euler angles directly
     this.euler.setFromQuaternion(this.yawObject.quaternion);
-    this.euler.rotateY(-movementX * sensitivity);
-    this.euler.rotateX(-movementY * sensitivity);
+    this.euler.y -= movementX * sensitivity;
+    this.euler.x -= movementY * sensitivity;
     
     // Clamp pitch
     this.euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.euler.x));
@@ -72,7 +74,6 @@ class InputHandler {
 
   shoot() {
     const origin = this.camera.position.clone();
-    this.camera.getWorldDirection(new THREE.Vector3());
     const direction = new THREE.Vector3();
     this.camera.getWorldDirection(direction);
     
