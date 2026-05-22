@@ -184,15 +184,15 @@
     </div>
   </div>
 
-  <!-- Load Three.js first -->
+  <!-- Three.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   
-  <!-- Load all classes before main game -->
+  <!-- Client-side game modules (must be loaded in correct order) -->
   <script src="src/network/NetworkManager.js"></script>
   <script src="src/game/GameClient.js"></script>
   <script src="src/input/InputHandler.js"></script>
   
-  <!-- Load main game last -->
+  <!-- Main game (loads last after all dependencies) -->
   <script src="src/index.js"></script>
 </body>
 </html>
